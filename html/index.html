@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BBV-BUTTON</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://use.fontawesome.com/releases/v5.15.4/js/all.js" data-auto-replace-svg="nest"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="app.js"></script>
+</head>
+
+<body>
+    <div class="ButtonMain" style="display: none;">
+        <div class="SprayM">
+            <div class="btn">
+                <div class="soft">
+                    <a href="#"><span class="btn-text">PLACEHOLDER</span></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Declare v as a global variable
+        let v;
+
+        window.addEventListener('message', function(event) {
+            // Update the global v with the event data
+            v = event.data;
+
+            switch (v.action) {
+                case 'open':
+                    $('.ButtonMain').show()
+                    const btn = document.querySelector(".btn");
+                    btn.querySelector("span").innerText = v.label;
+                    // console.log(v.label)
+                    break;
+            }
+        });
+
+        function CloseAll() {
+            $.post('https://bbv-interactbutton/exit', JSON.stringify({}));
+            $('.ButtonMain').hide()
+        }
+
+        $(document).keyup((e) => {
+            if (e.key === "Escape") {
+                CloseAll()
+            }
+        });
+
+        const btn = document.querySelector(".btn");
+        btn.addEventListener("click", () => {
+            if (!btn.classList.contains("active")) {
+                btn.classList.add("active");
+                btn.disabled = true;
+                setTimeout(() => {
+                    btn.classList.remove("active");
+                    btn.querySelector("span").innerText = v.finish;
+                    setTimeout(() => {
+                        CloseAll();
+                        btn.querySelector("span").innerText = "PLACEHOLDER";
+                        btn.disabled = false; // Re-enable the button
+                        $.post('https://bbv-interactbutton/event', JSON.stringify({
+                            event: v.event
+                        }));
+                    }, 2000);
+                }, v.time);
+            }
+        });
+    </script>
+</body>
+
+</html>
