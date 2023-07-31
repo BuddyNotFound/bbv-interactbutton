@@ -46,13 +46,7 @@
             $.post('https://bbv-interactbutton/exit', JSON.stringify({}));
             $('.ButtonMain').hide()
         }
-
-        $(document).keyup((e) => {
-            if (e.key === "Escape") {
-                CloseAll()
-            }
-        });
-
+        
         const btn = document.querySelector(".btn");
         btn.addEventListener("click", () => {
             if (!btn.classList.contains("active")) {
